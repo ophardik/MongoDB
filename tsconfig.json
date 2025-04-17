@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",  // Updated from ES6
+    "module": "CommonJS",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",  // Explicitly set root directory
+    "moduleResolution": "node"  // Explicitly set module resolution
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
