@@ -5,7 +5,9 @@ export interface IBook extends Document{
     bookName:string,
     bookPrice:number,
     owner:Types.ObjectId,
-    category:string
+    category:string,
+    productId:Types.ObjectId,
+    role:Types.ObjectId,
 }
 
 const bookSchema=new Schema<IBook>({
@@ -22,10 +24,19 @@ const bookSchema=new Schema<IBook>({
         ref:"User",
         required:true
     },
+    productId:{
+        type:Schema.Types.ObjectId,
+        ref:"Product",
+        required:true
+    },
     category:{
         type:String,
         required:true
-    }
+    },
+    role:{
+        type:Schema.Types.ObjectId,
+        ref:"User",
+    },
 })
 
 export const Book=model<IBook>("Book",bookSchema)

@@ -4,8 +4,8 @@ import { User } from "../Models/userModel";
 
 export const createUser=async(req:Request,res:Response)=>{
     try {
-        const {name,email,password,status}=req.body;
-        const user=await User.create({name,email,password,status});
+        const {name,email,password,status,roles}=req.body;
+        const user=await User.create({name,email,password,status,roles});
         res.status(201).json(user)
     } catch (error) {
         console.error(error)

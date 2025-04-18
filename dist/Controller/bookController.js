@@ -5,8 +5,8 @@ const bookModel_1 = require("../Models/bookModel");
 const addBook = async (req //Request<Params, ResBody, ReqBody>
 , res) => {
     try {
-        const { bookName, bookPrice, owner } = req.body;
-        const book = await bookModel_1.Book.create({ bookName, bookPrice, owner });
+        const { bookName, bookPrice, owner, category, productId, role } = req.body;
+        const book = await bookModel_1.Book.create({ bookName, bookPrice, owner, category, productId, role });
         res.json(book);
     }
     catch (error) {
@@ -14,23 +14,6 @@ const addBook = async (req //Request<Params, ResBody, ReqBody>
     }
 };
 exports.addBook = addBook;
-// export const getBook=async(req:Request,res:Response)=>{
-//     try {
-//       const books=await Book.aggregate([
-//         {
-//             $lookup:{
-//                 from:"users",
-//                 localField:"owner",
-//                 foreignField:"_id",
-//                 as:"ownerDetails"
-//             }
-//         }
-//       ])
-//       res.json(books)
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
 const getBook = async (req, res) => {
     try {
         const books = await bookModel_1.Book.aggregate([
@@ -43,8 +26,7 @@ const getBook = async (req, res) => {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: ["$_id", "$$ownerId"] }, // Single $ is used for fields
-                                        //Double $$ is used for variables inside aggregation
+                                        { $eq: ["$_id", "$$ownerId"] },
                                         { $eq: ["$status", "active"] }
                                     ]
                                 }
@@ -52,6 +34,41 @@ const getBook = async (req, res) => {
                         }
                     ],
                     as: "ownerDetails"
+                }
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    let: { productId: "$productId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$_id", "$$productId"] },
+                                        { $gt: ["$productPrice", 100] }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: "users",
+                                let: { role: "$role" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$role", "admin"]
+                                            }
+                                        }
+                                    }
+                                ],
+                                as: "userDetails"
+                            }
+                        }
+                    ],
+                    as: "productDetails"
                 }
             }
         ]);
@@ -62,3 +79,9 @@ const getBook = async (req, res) => {
     }
 };
 exports.getBook = getBook;
+//$expr :allows using aggregation expressions inside $match
+/* $eq : is used to compare values
+
+$_id :is from the user
+
+$$ownerId: is from the book */ 

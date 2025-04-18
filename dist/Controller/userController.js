@@ -4,8 +4,8 @@ exports.getAllUsers = exports.createUser = void 0;
 const userModel_1 = require("../Models/userModel");
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, status } = req.body;
-        const user = await userModel_1.User.create({ name, email, password, status });
+        const { name, email, password, status, roles } = req.body;
+        const user = await userModel_1.User.create({ name, email, password, status, roles });
         res.status(201).json(user);
     }
     catch (error) {
